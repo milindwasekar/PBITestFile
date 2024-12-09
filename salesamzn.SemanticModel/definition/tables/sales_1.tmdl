@@ -1,0 +1,65 @@
+table sales_1
+	lineageTag: ab388ed6-b5eb-4871-846b-9a11a6b8b996
+
+	column PID
+		dataType: int64
+		formatString: 0
+		lineageTag: 2645d6d0-22b3-489c-9b66-1e1ce6c2a0b6
+		summarizeBy: count
+		sourceColumn: PID
+
+		annotation SummarizationSetBy = Automatic
+
+	column qty
+		dataType: int64
+		formatString: 0
+		lineageTag: 7b75d793-096a-4727-8d66-bdadabfb1592
+		summarizeBy: sum
+		sourceColumn: qty
+
+		annotation SummarizationSetBy = Automatic
+
+	column Amount
+		dataType: int64
+		formatString: 0
+		lineageTag: 5c4fa061-05b0-4dc3-b2e5-4830fbd9f6a8
+		summarizeBy: sum
+		sourceColumn: Amount
+
+		annotation SummarizationSetBy = Automatic
+
+	column CID
+		dataType: int64
+		formatString: 0
+		lineageTag: 53b1ba05-e542-472f-b520-be76a75f0f9c
+		summarizeBy: count
+		sourceColumn: CID
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: f12f7ab5-d20a-4201-8c32-1dcb10f032af
+		summarizeBy: none
+		sourceColumn: SalesDate
+
+		variation Variation
+			isDefault
+			relationship: 113c15ac-5d49-4abc-8f68-da4864368e89
+			defaultHierarchy: LocalDateTable_94e067dd-8e22-4b16-bfd5-52518d9edfc9.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	partition sales_1 = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\Shree\mydemogit\PBITestFile\sales_1.csv"),[Delimiter=",", Columns=5, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"PID", Int64.Type}, {"qty", Int64.Type}, {"Amount", Int64.Type}, {"CID", Int64.Type}, {"SalesDate", type datetime}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+
